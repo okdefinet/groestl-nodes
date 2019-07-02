@@ -408,8 +408,6 @@ def process_pending_nodes(node_addresses, node_processing_queue, recent_heights,
                                      timestamp=timestamp,
                                      height=result['height'] if result["seen"] else None)
 
-                if mnodes and node.network == "dash" and "{}:{}".format(node.address, node.port) in mnodes:
-                    vis.is_masternode = True
 
                 session.add(vis)
 
@@ -445,56 +443,6 @@ def process_pending_nodes(node_addresses, node_processing_queue, recent_heights,
     return node_processing_queue, node_addresses
 
 
-def update_masternode_list():
-    mnodes = set()
-    comm = "dash-cli"
-    if os.path.isdir(CONF['dash_cli_path']):
-        comm = os.path.join(CONF['dash_cli_path'], "dash-cli")
-    masternodes = os.popen('{} masternode list full'.format(comm)).read().strip()
-    if masternodes:
-        masternodes = json.loads(masternodes)
-        for i in masternodes:
-            vals = masternodes[i].strip().split(" ")
-            address = vals[-1]
-            mnodes.add(address.strip())
-    if not masternodes and CONF['dash_masternodes_api']:
-        try:
-            mnodes = set(requests.post(CONF['dash_masternodes_api']).json())
-        except:
-            pass
-
-    if mnodes:
-        with open("static/masternode_list.txt", 'w') as f:
-            f.write("\n".join(mnodes))
-    elif os.path.isfile("static/masternode_list.txt"):
-        with open("static/masternode_list.txt", "r") as f:
-            mnodes = set(f.read().splitlines(keepends=False))
-    return mnodes
-
-def set_master_nodes(session, mnodes):
-    if not mnodes:
-        return
-    window_idx = 0
-    window_size = 10000
-    q = session.query(Node).filter(Node.seen == True)
-    while True:
-        start, stop = window_size * window_idx, window_size * (window_idx + 1)
-        nodes = q.slice(start, stop).all()
-        if nodes is None:
-            break
-        for n in nodes:
-            if n.address + ":" + str(n.port) in mnodes:
-                n.is_masternode = True
-                session.add(n)
-            elif n.is_masternode:
-                n.is_masternode = False
-                session.add(n)
-        session.commit()
-        window_idx += 1
-        if len(nodes) < window_size:
-            break
-
-
 def code_ip_type(inp):
     if ".onion" in inp:
         return "Onion"
@@ -507,14 +455,9 @@ def code_ip_type(inp):
 
 
 def dump_summary(session):
-    ## Get and set dash masternodes
-    if CONF['get_dash_masternodes']:
-        mnodes = update_masternode_list()
-        set_master_nodes(session, mnodes)
-        logging.info("masternodes updated")
 
     q = session.query(Node.id, Node.network, Node.address, Node.port, Node.user_agent, Node.version, Node.asn, Node.aso,
-                      Node.country, Node.city, Node.last_seen, Node.last_height, Node.is_masternode) \
+                      Node.country, Node.city, Node.last_seen, Node.last_height) \
         .filter(Node.seen == True) \
         .filter(Node.last_seen >= datetime.datetime.utcnow() - datetime.timedelta(days=7))
 
@@ -675,10 +618,6 @@ def main(session, seed=False):
     prune_nodes(session)
     node_addresses, recent_heights = init_crawler(session, networks)
 
-    if CONF['get_dash_masternodes']:
-        mnodes = update_masternode_list()
-    else:
-        mnodes = None
 
     if seed:
         seed_nodes = check_dns(CONF['networks'], node_addresses)
@@ -728,8 +667,7 @@ def generate_historic_data(session):
 
         q = session.query(NodeVisitation.parent_id.label("id"),
                           case([(NodeVisitation.user_agent.ilike("% SV%"), 'bitcoin-sv')], else_=Node.network).label("network"),
-                          func.max(NodeVisitation.height).label("height"),
-                          func.max(case([(NodeVisitation.is_masternode, 1)], else_=0)).label("is_masternode")) \
+                          func.max(NodeVisitation.height).label("height") \
             .join(Node, Node.id == NodeVisitation.parent_id) \
             .filter(NodeVisitation.timestamp >= interval_end - historic_interval) \
             .filter(NodeVisitation.timestamp <= interval_end) \
@@ -765,7 +703,6 @@ def generate_historic_data(session):
             cs = CrawlSummary(timestamp=interval_end,
                               network=network,
                               node_count=len(netDF),
-                              masternode_count=sum(netDF['is_masternode']),
                               lookback_hours=CONF['historic_interval'])
 
             session.add(cs)
@@ -778,7 +715,7 @@ def generate_historic_data(session):
     df['timestamp'] = df['timestamp'].values.astype(np.int64) // 10 ** 9
 
     for network in networks:
-        df[df['network'] == network][['timestamp', 'node_count', 'masternode_count']] \
+        df[df['network'] == network][['timestamp', 'node_count']] \
             .to_json("static/history_{}.json".format(network), orient='records')
 
 

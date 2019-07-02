@@ -48,7 +48,6 @@ class Node(Base):
     city = Column(String(60), nullable=True)
     asn = Column(Integer, nullable=True)
     aso = Column(String(100), nullable=True)
-    is_masternode = Column(Boolean, default=False, nullable=False)
 
     Index('idx_node', 'network', 'address', 'port', unique=True)
 
@@ -70,8 +69,7 @@ class Node(Base):
             "country":self.country,
             "city":self.city,
             "asn": self.asn,
-            "aso":self.aso,
-            "is_masternode":self.is_masternode
+            "aso":self.aso
         }
 
     def from_dict(self, d):
@@ -92,7 +90,6 @@ class Node(Base):
         self.city = d['city']
         self.asn = d['asn']
         self.aso = d['aso']
-        self.is_masternode = d['is_masternode']
 
     @staticmethod
     def new_from_dict(d):
@@ -114,7 +111,6 @@ class Node(Base):
         obj.city = d['city'] if 'city' in d else None
         obj.asn = d['asn'] if 'asn' in d else None
         obj.aso = d['aso'] if 'aso' in d else None
-        obj.is_masternode = d['is_masternode'] if 'is_masternode' in d else None
         return obj
 
     def __repr__(self):
@@ -156,12 +152,8 @@ class CrawlSummary(Base):
     timestamp = Column(DateTime, default=datetime.datetime.utcnow())
     network = Column(String(255), nullable=False)
     node_count = Column(Integer, nullable=False)
-    masternode_count = Column(Integer, nullable=False)
     lookback_hours = Column(Integer)
 
-    def __repr__(self):
-        return "<SUMMARY - {}:{}; {} ({} masternodes), {} hours>".format(
-            self.network, self.timestamp.isoformat(), self.node_count, self.masternode_count, self.lookback_hours)
 
 class NodeVisitation(Base):
     __tablename__ = 'node_visitations'
@@ -175,7 +167,6 @@ class NodeVisitation(Base):
     success = Column(Boolean, default=False)
     height = Column(BIGINT, nullable=True)
     user_agent = Column(String(60))
-    is_masternode = Column(Boolean, default=None)
 
     Index('idx_vis_timestamp', 'timestamp')
 
@@ -186,7 +177,6 @@ class NodeVisitation(Base):
             "timestamp":self.timestamp,
             "success":self.success,
             "user_agent":self.user_agent,
-            "is_masternode":self.is_masternode,
             "height":self.height
         }
 
@@ -196,7 +186,6 @@ class NodeVisitation(Base):
         self.timestamp = d["timestamp"]
         self.success = d["success"]
         self.height = d["height"]
-        self.is_masternode = d['is_masternode']
         self.user_agent = d['user_agent']
 
     @staticmethod
@@ -207,7 +196,6 @@ class NodeVisitation(Base):
         obj.timestamp = d["timestamp"] if 'timestamp' in d else None
         obj.success = d["success"] if 'success' in d else None
         obj.height = d["height"] if 'height' in d else None
-        obj.is_masternode = d['is_masternode'] if 'is_masternode' in d else None
         obj.user_agent = d['user_agent'] if 'user_agent' in d else None
         return obj
 

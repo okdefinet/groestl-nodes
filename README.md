@@ -1,15 +1,11 @@
-## Open Nodes
+## Groestl Nodes
 
-Open Nodes is a crawler that attempts to map out all nodes of crypto currencies based on the bitcoin protocol.
+Groestl Nodes is a crawler that attempts to map out all Groestlcoin nodes for mainnet and testnet
 
 A flask web server is included to display the data.
 
 ### Usage
 ```
-# Install python virtual environment
-apt install python3-pip python3-venv
-python3 -m venv venv
-source venv/bin/activate
 
 # Install packages (Python 3)
 # psycopg2-binary is required for postgres support
@@ -20,10 +16,10 @@ pip install -r requirements.txt
 cd geoip && ./update.sh && cd ..
 
 # run crawler
-python crawler.py --seed --crawl --dump
+python3.7 crawler.py --seed --crawl --dump
 
 # run development flask server
-python app.py
+python3.7 app.py
 ```
 
 The `--seed` parameter is only needed for the first run or when adding a new network. It will hit all the DNS seeds specified in the config file, as well as all individual seeder nodes (if applicable)
@@ -37,7 +33,7 @@ IPv6 Nodes will only be reachable if you have IPv6 Routing available. To set up 
 Onion Nodes will only be reachable if you have a Tor server running (`apt install tor`)
 
 ### Deployment
-The crawler is best run via cron jobs, `--dump` instances should be scheduled separately from `--crawl` jobs. 
+The crawler is best run via cron jobs, `--dump` instances should be scheduled separately from `--crawl` jobs.
 
 `flock` should be used to prevent multiple instances from running concurrently
 
@@ -53,7 +49,7 @@ nano /etc/systemd/system/opennodes.service
 
 and add
 
-``` 
+```
 [Unit]
 Description=OpenNodes uWSGI instance
 After=network.target
@@ -77,11 +73,11 @@ nano /etc/nginx/sites-available/opennodes
 ```
 and add
 
-``` 
+```
 server {
     listen 80;
     server_name {{ SERVER DOMAIN OR IP }};
-    
+
     location / {
         include uwsgi_params;
         uwsgi_pass unix:///home/{{ PROJECT ROOT }}/opennodes.sock;

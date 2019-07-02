@@ -157,15 +157,6 @@
                                 </div>
                             </div>
                         {% endif %}
-
-                        {% if has_masternodes %}
-                            <div class="col dc-pie-cont mx-auto">
-                                <div class="row">
-                                    <div id="is_masternode-chart" class="col dc-pie"></div>
-                                    <div class="w-100"></div>
-                                </div>
-                            </div>
-                        {% endif %}
                     </div>
                 </div>
 
@@ -229,7 +220,7 @@
                     <span>Check the status of a remote node:</span>
                     <form class="form-inline mt-2" action="#">
                         <input id="check_node_input" type="text" class="form-control"
-                               placeholder="{% if not network %}btc:{% endif %}127.0.0.1" autocomplete="off">
+                               placeholder="{% if not network %}grs:{% endif %}127.0.0.1" autocomplete="off">
                         <button id="check_node_submit" type="button" class="btn btn-primary">Check Node</button>
                     </form>
                 </div>
@@ -568,25 +559,6 @@
                             return "Active"
                         }
                         return "Inactive";
-                    });
-                {% endif %}
-
-                {% if has_masternodes %}
-                    <!-- is_masternode -->
-                    const is_masternodeDim = ndx.dimension(function (d) {
-                        return d.is_masternode;
-                    });
-                    const countByis_masternode = is_masternodeDim.group().reduceCount(function (d) {
-                        return d.is_masternode;
-                    });
-                    const is_masternodeChart = dc.pieChart("#is_masternode-chart");
-                    is_masternodeChart.width(200).height(200).dimension(is_masternodeDim).group(countByis_masternode)
-                        .useViewBoxResizing(true).minAngleForLabel(0.15).externalLabels(20).externalRadiusPadding(45)
-                        .renderTitle(false).cap(10).label(function (d) {
-                        if (d.key) {
-                            return "Masternode"
-                        }
-                        return "Full Node";
                     });
                 {% endif %}
 
