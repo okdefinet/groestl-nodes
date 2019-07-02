@@ -288,7 +288,7 @@ def calculate_pending_nodes(session, start_time):
 
 
 def process_pending_nodes(node_addresses, node_processing_queue, recent_heights, thread_pool, session, ASN,
-                          COUNTRY, CITY, mnodes=None):
+                          COUNTRY, CITY):
     futures_dict = {}
 
     checked_nodes = 0
@@ -630,7 +630,7 @@ def main(session, seed=False):
     while node_processing_queue:
         node_processing_queue, node_addresses = process_pending_nodes(node_addresses, node_processing_queue,
                                                                       recent_heights, thread_pool, session, ASN,
-                                                                      COUNTRY, CITY, mnodes)
+                                                                      COUNTRY, CITY)
         node_processing_queue = calculate_pending_nodes(session, start_time)
     logging.info("Crawling complete in {} seconds".format(round((datetime.datetime.utcnow() - start_time).seconds, 1)))
 
@@ -667,7 +667,8 @@ def generate_historic_data(session):
 
         q = session.query(NodeVisitation.parent_id.label("id"),
                           case([(NodeVisitation.user_agent.ilike("% SV%"), 'bitcoin-sv')], else_=Node.network).label("network"),
-                          func.max(NodeVisitation.height).label("height") \
+                          func.max(NodeVisitation.height).label("height"),
+                          func.max(case([(NodeVisitation.is_masternode, 1)], else_=0)).label("is_masternode")) \
             .join(Node, Node.id == NodeVisitation.parent_id) \
             .filter(NodeVisitation.timestamp >= interval_end - historic_interval) \
             .filter(NodeVisitation.timestamp <= interval_end) \

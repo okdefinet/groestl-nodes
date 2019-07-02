@@ -79,10 +79,10 @@ networks:
     protocol_version: 70002
     min_protocol_version: 70002
     dns_seeds:
-      - dnsseed1.groestloin.org
-      - dnsseed2.groestloin.org
-      - dnsseed3.groestloin.org
-      - dnsseed4.groestloin.org
+      - dnsseed1.groestlcoin.org
+      - dnsseed2.groestlcoin.org
+      - dnsseed3.groestlcoin.org
+      - dnsseed4.groestlcoin.org
     address_seeds:
       - 6brsrbiinpc32tfc.onion
       - xkj42efxrcy6vbfw.onion
