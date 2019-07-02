@@ -667,8 +667,7 @@ def generate_historic_data(session):
 
         q = session.query(NodeVisitation.parent_id.label("id"),
                           case([(NodeVisitation.user_agent.ilike("% SV%"), 'bitcoin-sv')], else_=Node.network).label("network"),
-                          func.max(NodeVisitation.height).label("height"),
-                          func.max(case([(NodeVisitation.is_masternode, 1)], else_=0)).label("is_masternode")) \
+                          func.max(NodeVisitation.height).label("height")) \
             .join(Node, Node.id == NodeVisitation.parent_id) \
             .filter(NodeVisitation.timestamp >= interval_end - historic_interval) \
             .filter(NodeVisitation.timestamp <= interval_end) \
