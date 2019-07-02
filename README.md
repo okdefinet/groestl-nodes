@@ -8,6 +8,8 @@ A flask web server is included to display the data.
 ```
 
 # Install packages (Python 3)
+sudo apt-get install python3-pip python3-dev
+
 # psycopg2-binary is required for postgres support
 # uwsgi is required for nginx/apache deployment
 pip install -r requirements.txt
@@ -18,8 +20,9 @@ cd geoip && ./update.sh && cd ..
 # run crawler
 python3.7 crawler.py --seed --crawl --dump
 
-# run development flask server
-python3.7 app.py
+# run Production Server
+uwsgi --socket 0.0.0.0:80 --protocol=http -w wsgi:app
+
 ```
 
 The `--seed` parameter is only needed for the first run or when adding a new network. It will hit all the DNS seeds specified in the config file, as well as all individual seeder nodes (if applicable)
@@ -38,58 +41,3 @@ The crawler is best run via cron jobs, `--dump` instances should be scheduled se
 `flock` should be used to prevent multiple instances from running concurrently
 
 For production use, the default database (sqlite) should not be used, as the file lock timeout will prevent simultaneous crawling, dumping, and reporting/api calls.
-
-### NGINX deployment
-
-`wsgi.py` and `flask.ini` are included for nginx deployment. You will need to `pip install uwsgi` and then set up a system service (see https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uwsgi-and-nginx-on-ubuntu-16-04)
-
-```
-nano /etc/systemd/system/opennodes.service
-```
-
-and add
-
-```
-[Unit]
-Description=OpenNodes uWSGI instance
-After=network.target
-
-[Service]
-User= {{ USERNAME }}
-Group=www-data
-WorkingDirectory=/home/{{ PROJECT ROOT }}
-Environment="PATH=/home/{{ PATH TO PYTHON/VENV BIN DIR }}"
-ExecStart=/home/{{ PATH TO PYTHON/VENV BIN DIR }}/uwsgi --ini flask.ini
-
-[Install]
-WantedBy=multi-user.target
-
-```
-
-Now you need to add nginx configuration to handle proxy requests
-
-```
-nano /etc/nginx/sites-available/opennodes
-```
-and add
-
-```
-server {
-    listen 80;
-    server_name {{ SERVER DOMAIN OR IP }};
-
-    location / {
-        include uwsgi_params;
-        uwsgi_pass unix:///home/{{ PROJECT ROOT }}/opennodes.sock;
-    }
-}
-```
-Where the domain/ip is likely 127.0.0.1
-
-Then add a symbolic link, remove the default configuration, and restart nginx
-
-```
-ln -s /etc/nginx/sites-available/opennodes /etc/nginx/sites-enabled
-rm /etc/nginx/sites-enabled/default
-systemctl restart nginx
-```

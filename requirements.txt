@@ -9,4 +9,5 @@ numpy
 pandas
 pyyaml
 uwsgi
+flask
 groestlcoin-hash
