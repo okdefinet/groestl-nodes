@@ -10,6 +10,10 @@ A flask web server is included to display the data.
 # Install packages (Python 3)
 sudo apt-get install python3-pip python3-dev
 
+#Clone repository
+git clone https://github.com/Groestlcoin/groestl-nodes
+cd groestl-nodes
+
 # psycopg2-binary is required for postgres support
 # uwsgi is required for nginx/apache deployment
 pip install -r requirements.txt
@@ -32,7 +36,7 @@ python3.7 app.py --prod
 
 ```
 
-The `--seed` parameter is only needed for the first run or when adding a new network. It will hit all the DNS seeds specified in the config file, as well as all individual seeder nodes (if applicable)
+The `--seed` parameter is only needed for the first run. It will hit all the DNS seeds specified in the config file, as well as all individual seeder nodes (if applicable)
 
 The `--crawl` parameter iterates through all known nodes and stores them in the specified database
 

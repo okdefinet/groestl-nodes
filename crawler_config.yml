@@ -35,7 +35,7 @@ crawl_order:
 
 # Locks database table and updates Last_Checked BEFORE crawling nodes
 # Performance overhead, but necessary if multiple processes are crawling concurrently using the same database
-database_concurrency: False
+database_concurrency: True
 
 # Socket timeout (seconds)
 socket_timeout: 20
@@ -61,7 +61,7 @@ prune_visitations: False
 
 # Active nodes are defined as nodes within +/- [inactive_threshold] of the median block height.
 # If false inactive nodes will not be reported in the dumped files
-export_inactive_nodes: True
+export_inactive_nodes: False
 
 # Excluded user agents - regex (see https://docs.python.org/3/library/re.html)
 excluded_user_agents:
