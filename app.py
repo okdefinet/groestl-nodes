@@ -356,7 +356,7 @@ def to_json(d):
 
 
 def main():
-    app.run("0.0.0.0", debug=False if "--prod" in sys.argv else True, port=8888 if "--prod" in sys.argv else 5000)
+    app.run("0.0.0.0", debug=False if "--prod" in sys.argv else True, port=443 if "--prod" in sys.argv else 5000, ssl_context=('/etc/letsencrypt/live/nodes.groestlcoin.org/fullchain.pem', '/etc/letsencrypt/live/nodes.groestlcoin.org/privkey.pem'))
 
 if __name__ == '__main__':
     main()

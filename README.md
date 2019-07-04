@@ -20,8 +20,15 @@ cd geoip && ./update.sh && cd ..
 # run crawler
 python3.7 crawler.py --seed --crawl --dump
 
+# Enable https
+sudo apt-get install software-properties-common
+sudo add-apt-repository ppa:certbot/certbot
+sudo apt-get update
+sudo apt-get install certbot
+certbot certonly --standalone -d nodes.groestlcoin.org
+
 # run Production Server
-uwsgi --socket 0.0.0.0:80 --protocol=http -w wsgi:app
+python3.7 app.py --prod
 
 ```
 
@@ -39,5 +46,3 @@ Onion Nodes will only be reachable if you have a Tor server running (`apt instal
 The crawler is best run via cron jobs, `--dump` instances should be scheduled separately from `--crawl` jobs.
 
 `flock` should be used to prevent multiple instances from running concurrently
-
-For production use, the default database (sqlite) should not be used, as the file lock timeout will prevent simultaneous crawling, dumping, and reporting/api calls.
