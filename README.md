@@ -7,12 +7,12 @@ A flask web server is included to display the data.
 ### Usage
 ```
 
-# Install packages (Python 3)
-sudo apt-get install python3-pip python3-dev
+# Install packages
+sudo apt-get install python3-pip python3-dev nginx
 
 #Clone repository
-git clone https://github.com/Groestlcoin/groestl-nodes
-cd groestl-nodes
+git clone https://github.com/Groestlcoin/groestl-nodes /groestl-nodes
+cd /groestl-nodes
 
 # psycopg2-binary is required for postgres support
 # uwsgi is required for nginx/apache deployment
@@ -31,8 +31,35 @@ sudo apt-get update
 sudo apt-get install certbot
 certbot certonly --standalone -d nodes.groestlcoin.org
 
-# run Production Server
-python3.7 app.py --prod
+# Change the project directory ownership to www-data
+chown -R www-data.www-data /groestl-nodes
+
+# Copy uWSGI startup file
+cp groestlnodes.service /etc/systemd/system/groestlnodes.service
+
+# Start uWSGI
+sudo systemctl start groestlnodes
+
+# Check the status
+sudo systemctl status groestlnodes
+
+# You should be able to see the socket with
+ls /groestl-nodes/groestlnodes.sock
+
+# Enable it on startup
+sudo systemctl enable groestlnodes
+
+# Copy Nginx file
+cp groestlnodes /etc/nginx/sites-available/
+
+# Add symbolic link for site-enabled
+ln -s /etc/nginx/sites-available/groestlnodes /etc/nginx/sites-enabled
+
+# Remove the default configuration of Nginx
+rm /etc/nginx/sites-enabled/default
+
+# Restart nginx
+systemctl restart nginx
 
 ```
 
