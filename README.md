@@ -10,7 +10,7 @@ A flask web server is included to display the data.
 # Install packages
 sudo apt-get install python3-pip python3-dev nginx
 
-#Clone repository
+# Clone repository
 git clone https://github.com/Groestlcoin/groestl-nodes /groestl-nodes
 cd /groestl-nodes
 
@@ -18,11 +18,14 @@ cd /groestl-nodes
 # uwsgi is required for nginx/apache deployment
 pip install -r requirements.txt
 
-# setup geoip database
+# Setup geoip database
 cd geoip && ./update.sh && cd ..
 
-# run crawler
+# Run crawler in loop
 python3.7 crawler.py --seed --crawl --dump
+screen
+python3.7 crawler.py --seed --crawl --dump --loop
+ctrl+A and ctrl+D
 
 # Enable https
 sudo apt-get install software-properties-common
