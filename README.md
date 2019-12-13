@@ -32,7 +32,7 @@ sudo apt-get install software-properties-common
 sudo add-apt-repository ppa:certbot/certbot
 sudo apt-get update
 sudo apt-get install certbot
-certbot certonly --standalone -d nodes.groestlcoin.org
+certbot certonly -d nodes.groestlcoin.org
 
 # Change the project directory ownership to www-data
 chown -R www-data.www-data /groestl-nodes
