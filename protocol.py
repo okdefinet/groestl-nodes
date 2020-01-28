@@ -25,19 +25,20 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 """
-Bitcoin protocol access for Bitnodes.
+Okcash protocol access for oknodes.
 Reference: https://en.bitcoin.it/wiki/Protocol_specification
 
 -------------------------------------------------------------------------------
-                     PACKET STRUCTURE FOR GROESTLCOIN PROTOCOL
-                           protocol version >= 70002
+                     PACKET STRUCTURE FOR OKCASH PROTOCOL
+                           protocol version >= 60021
 -------------------------------------------------------------------------------
 [---MESSAGE---]
 [ 4] MAGIC_NUMBER               (\x69\xf0\x0f\x69)                  uint32_t
 [12] COMMAND                                                        char[12]
 [ 4] LENGTH                     <I (len(payload))                   uint32_t
-[ 4] CHECKSUM                   okcash(okcash(payload)[:4])       uint32_t
+[ 4] CHECKSUM                   (sha256(sha256(payload))[:4])       uint32_t
 [..] PAYLOAD                    see below
 
     [---VERSION_PAYLOAD---]
@@ -137,6 +138,7 @@ Reference: https://en.bitcoin.it/wiki/Protocol_specification
 -------------------------------------------------------------------------------
 """
 
+import hashlib
 import random
 import socket
 import socks
@@ -508,7 +510,7 @@ class Serializer(object):
         # Calculate hash from: version (4 bytes) + prev_block_hash (32 bytes) +
         # merkle_root (32 bytes) + timestamp (4 bytes) + bits (4 bytes) +
         # nonce (4 bytes) = 80 bytes
-        msg['block_hash'] = hexlify(sha256(sha256(data[:80]))[::-1]
+        msg['block_hash'] = hexlify(sha256(sha256(data[:80]))[::-1])
 
         data = BytesIO(data)
 

@@ -10,4 +10,3 @@ pandas
 pyyaml
 uwsgi
 flask
-

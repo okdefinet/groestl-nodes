@@ -30,7 +30,7 @@ import binascii
 from ipaddress import ip_network
 
 class DefaultFlaskConfig(object):
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///oknodes.sqlite'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///nodes.sqlite'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     TEMPLATES_AUTO_RELOAD = True
 
