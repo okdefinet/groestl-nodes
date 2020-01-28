@@ -23,7 +23,7 @@ inactive_threshold:
 ipv6: True
 
 # Attempt to establish connection with .onion nodes
-onion: True
+onion: False
 
 # Tor proxy is required to connect to .onion address
 tor_proxy: 127.0.0.1:9050
@@ -31,7 +31,7 @@ tor_proxy: 127.0.0.1:9050
 # order with which to process the networks
 crawl_order:
   - testnet
-  - groestlcoin
+  - okcash
 
 # Locks database table and updates Last_Checked BEFORE crawling nodes
 # Performance overhead, but necessary if multiple processes are crawling concurrently using the same database
@@ -47,7 +47,7 @@ retries: 1
 retry_threshold: 48
 
 # Used during connection handshake
-user_agent: /groestl-nodes:0.1/
+user_agent: /oknodes:0.1/
 source_address: 0.0.0.0
 
 # How many days to continue checking a node that has not yet been seen
@@ -65,77 +65,38 @@ export_inactive_nodes: False
 
 # Excluded user agents - regex (see https://docs.python.org/3/library/re.html)
 excluded_user_agents:
-  - /BitCoinJ*
+  - /desire*
 
 # historical data reporting interval (hours)
 historic_interval: 4
 
 # Protocol info for crawled networks
 networks:
-  groestlcoin:
+  okcash:
     services: 0
-    magic_number: f9beb4d4
-    port: 1331
-    protocol_version: 70002
-    min_protocol_version: 70002
+    magic_number: 69f00f69
+    port: 6970
+    protocol_version: 60022
+    min_protocol_version: 60021
     dns_seeds:
-      - dnsseed1.groestlcoin.org
-      - dnsseed2.groestlcoin.org
-      - dnsseed3.groestlcoin.org
-      - dnsseed4.groestlcoin.org
+      - seed1.okcash.co
+      - seed2.okcash.co
+      - seed3.okcash.co
+      - seed4.okcash.co
     address_seeds:
-      - 6brsrbiinpc32tfc.onion
-      - xkj42efxrcy6vbfw.onion
-      - j2pokkxrnqifawlo.onion
-      - fxqag2xgbttgpn5t.onion
-      - wbu6iwai7g5vsmqf.onion
-      - ozarkd36gllcq64p.onion
-      - lgafnxxckcohp3lb.onion
-      - daxevrnxtrjtatnq.onion
-      - 54fufvlyfsv6mu27.onion
-      - oopkp4mazgysotus.onion
-      - imfxdu2iaxphpzoj.onion
-      - msu62n2wehlyvu73.onion
-      - 4g54umgydy2efvkp.onion
-      - nxb5shpaqcppuaac.onion
-      - liciqskhe3kb56sx.onion
-      - 6urwohx677tqyx4d.onion
-      - jmkqrcrthxzgijzc.onion
-      - o2i7q65crpvgkyhp.onion
-      - sakl2ebpspx4yqux.onion
-      - kahwte3yfwedilib.onion
-      - 4jnj4nztibl6nzr7.onion
-      - 7bh7oexd6sgaa2ui.onion
-      - 6txnygqn2lo3pas7.onion
-      - vhaltx6l3qz7m6gm.onion
-      - pcorvh3z6l4qsfvh.onion
-      - 4vncucq2hxqgobn4.onion
-      - ezwaifwooob3xitg.onion
-      - uqxfaectrpqqvogm.onion
-      - tewjvvb2acejbpwu.onion
-      - bmbrjepkos5brm3m.onion
-      - evkxwqlvatx2bbuk.onion
-      - ekjgl6n6jhcqfq2x.onion
-      - 5seia6dn4dphcw4n.onion
-      - c7kmgs5kd4wvgyo2.onion
-      - ygovc7jlb6itiis4.onion
-      - f33ys4h3e4nbdrdm.onion
-      - csg7djvlqujxn4qt.onion
-      - yw7dotigvofzqmql.onion
-      - aal7howc56u3j5bg.onion
-      - gnuvqomyhedouwqw.onion
+      - 38.240.3.130
+
   testnet:
     services: 0
-    magic_number: 0b110907
-    port: 17777
-    protocol_version: 70002
-    min_protocol_version: 70002
+    magic_number: 00097a0f
+    port: 7980
+    protocol_version: 60022
+    min_protocol_version: 60021
     dns_seeds:
-    - testnet-seed1.groestlcoin.org
-    - testnet-seed2.groestlcoin.org
+    - test-seed1.okcash.co
+    - test-seed2.okcash.co
     address_seeds:
     - aocojvqcybdoxekv.onion
-    - 7frvhgofuf522b5i.onion
 
 exclude_ipv4_networks:
   - 0.0.0.0/8

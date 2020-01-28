@@ -1,6 +1,6 @@
-## Groestl Nodes
+## OK Nodes
 
-Groestl Nodes is a crawler that attempts to map out all Groestlcoin nodes for mainnet and testnet
+OK Nodes is a crawler that attempts to map out all Groestlcoin nodes for mainnet and testnet
 
 A flask web server is included to display the data.
 
@@ -11,8 +11,8 @@ A flask web server is included to display the data.
 sudo apt-get install python3-pip python3-dev nginx
 
 # Clone repository
-git clone https://github.com/Groestlcoin/groestl-nodes /groestl-nodes
-cd /groestl-nodes
+git clone https://github.com/Groestlcoin/oknodes /oknodes
+cd /oknodes
 
 # psycopg2-binary is required for postgres support
 # uwsgi is required for nginx/apache deployment
@@ -32,31 +32,31 @@ sudo apt-get install software-properties-common
 sudo add-apt-repository ppa:certbot/certbot
 sudo apt-get update
 sudo apt-get install certbot
-certbot certonly -d nodes.groestlcoin.org
+certbot certonly -d nodes.okcash.org
 
 # Change the project directory ownership to www-data
-chown -R www-data.www-data /groestl-nodes
+chown -R www-data.www-data /oknodes
 
 # Copy uWSGI startup file
-cp groestlnodes.service /etc/systemd/system/groestlnodes.service
+cp oknodes.service /etc/systemd/system/oknodes.service
 
 # Start uWSGI
-sudo systemctl start groestlnodes
+sudo systemctl start oknodes
 
 # Check the status
-sudo systemctl status groestlnodes
+sudo systemctl status oknodes
 
 # You should be able to see the socket with
-ls /groestl-nodes/groestlnodes.sock
+ls /oknodes/oknodes.sock
 
 # Enable it on startup
-sudo systemctl enable groestlnodes
+sudo systemctl enable oknodes
 
 # Copy Nginx file
-cp groestlnodes /etc/nginx/sites-available/
+cp oknodes /etc/nginx/sites-available/
 
 # Add symbolic link for site-enabled
-ln -s /etc/nginx/sites-available/groestlnodes /etc/nginx/sites-enabled
+ln -s /etc/nginx/sites-available/oknodes /etc/nginx/sites-enabled
 
 # Remove the default configuration of Nginx
 rm /etc/nginx/sites-enabled/default

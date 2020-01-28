@@ -52,7 +52,7 @@ COUNTRY, CITY, ASN = init_geoip()
 @app.route('/')
 @app.route('/networks/<network_name>', methods=['GET'])
 def network_dashboard(network_name=None):
-    if not network_name in ("groestlcoin", "testnet", None):
+    if not network_name in ("okcash", "testnet", None):
         flash("Invalid network")
         return redirect("/")
 
@@ -98,7 +98,7 @@ def gzip_response(input_str, pre_compressed):
 def get_networks():
     """
     Returns a list of all available network names
-    :return: JSON string, ex. "['groestlcoin','testnet']"
+    :return: JSON string, ex. "['okcash','testnet']"
     """
     return json.dumps([x[0] for x in db.session.query(Node.network).distinct().all()])
 
@@ -126,8 +126,8 @@ def deconstruct_address_string(inp):
     assert isinstance(inp, str)
 
     resp = {}
-    aliases = {'grs': 'groestlcoin',
-               'tgrs': 'testnet'}
+    aliases = {'ok': 'okcash',
+               'tok': 'testnet'}
 
     inp = inp.lower()
     network = inp.split(":")[0]
@@ -136,8 +136,8 @@ def deconstruct_address_string(inp):
         network = aliases[network] if network in aliases else network
         network = network if network in CONF['networks'] else None
     if not network:
-        network = "groestlcoin"
-        resp['warning'] = "Network not recognized, using GRS"
+        network = "okcash"
+        resp['warning'] = "Network not recognized, using OK"
 
     if ":" in inp:
         port = inp.split(":")[-1]
@@ -159,14 +159,14 @@ def check_node():
     """
     Checks the current status of a node. This is a live result, so response times will be longer - to view a saved
     result see /api/check_historic_node.
-    :param node: connection string, e.g. grs:127.0.0.1:1331 - port is optional if it is the network default
+    :param node: connection string, e.g. ok:127.0.0.1:6970 - port is optional if it is the network default
     :param to_services (integer, optional): outgoing services to broadcast, default=0
     :param from_services (integer, optional): outgoing services to broadcast, default=0
     :param version (integer, optional): version code to broadcast, default varies by network
-    :param user_agent (string, optional): user agent to broadcast, default="/groestl-nodes:0.1/"
+    :param user_agent (string, optional): user agent to broadcast, default="/oknodes:0.1/"
     :param height (integer, optional): block height to broadcast during handshake. default=network median
     :param p2p_nodes (bool, optional): issues a getaddr call and list of connected nodes, default=False
-    :return: json dict {"result":{"user_agent":"/Groestlcoin:2.17.2/", "version":" .... }, "nodes":[["127.0.0.1:1331, 157532132191], ...]}
+    :return: json dict {"result":{"user_agent":"/oktoshi:5.0.0.2/", "version":" .... }, "nodes":[["127.0.0.1:6970, 157532132191], ...]}
     """
 
     dat = request.form
@@ -203,8 +203,8 @@ def check_historic_node():
     """
     Checks the status of a node based on the last crawl
     result see /api/check_historical_node
-    :param node: connection string, e.g. grs:127.0.0.1:1331 - port is optional if it is the network default
-    :return: json dict {"result":{"user_agent":"/Groestlcoin:2.17.2/", "version":" .... }}
+    :param node: connection string, e.g. ok:127.0.0.1:6970 - port is optional if it is the network default
+    :return: json dict {"result":{"user_agent":"/oktoshi:5.0.0.2/", "version":" .... }}
     """
 
     if request.method == "POST":
@@ -240,7 +240,7 @@ def get_node_list():
     """
     Gets a list of all nodes visible during the past 30 days
     :param network (optional): Filters the result set based on the given network
-    :return: json array [{"address":"127.0.0.1" ... }, {"address":"0.0.0.0", "port:1331}]
+    :return: json array [{"address":"127.0.0.1" ... }, {"address":"0.0.0.0", "port:6970}]
     """
 
     q = db.session.query(Node.network, Node.address, Node.port, Node.user_agent, Node.version, Node.first_seen,
@@ -258,8 +258,8 @@ def get_node_list():
 def get_node_history():
     """
     Returns the data associated with a node, and all crawler visitations on record
-    :param node: connection string, e.g. grs:127.0.0.1:1331 - port is optional if it is the network default.
-    :return: json dict {"node":{"user_agent":"/Groestlcoin/", "last_seen": ... }, "history":{"timestamp":157032190321,"height":56000, "success":1 ...}}
+    :param node: connection string, e.g. ok:127.0.0.1:6970 - port is optional if it is the network default.
+    :return: json dict {"node":{"user_agent":"/oktoshi/", "last_seen": ... }, "history":{"timestamp":157032190321,"height":56000, "success":1 ...}}
     """
 
 
@@ -356,7 +356,8 @@ def to_json(d):
 
 
 def main():
-    app.run("0.0.0.0", debug=False if "--prod" in sys.argv else True, port=443 if "--prod" in sys.argv else 5000, ssl_context=('/etc/letsencrypt/live/nodes.groestlcoin.org/fullchain.pem', '/etc/letsencrypt/live/nodes.groestlcoin.org/privkey.pem'))
+    app.run("0.0.0.0", debug=False if "--prod" in sys.argv else True, port=8888 if "--prod" in sys.argv else 5000)
+    # app.run("0.0.0.0", debug=False if "--prod" in sys.argv else True, port=443 if "--prod" in sys.argv else 5000, ssl_context=('/etc/letsencrypt/live/nodes.okcash.org/fullchain.pem', '/etc/letsencrypt/live/nodes.okcash.org/privkey.pem'))
 
 if __name__ == '__main__':
     main()

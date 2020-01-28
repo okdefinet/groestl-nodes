@@ -1,0 +1,18 @@
+server {
+    # listen 80;
+    # listen 443 ssl;
+    # ssl_certificate /etc/letsencrypt/live/okcash.network/fullchain.pem;
+    # ssl_certificate_key /etc/letsencrypt/live/okcash.network/privkey.pem;
+    # server_name okcash.network;
+	listen 104.167.96.242:80 default_server;
+
+    ## force https-redirects
+    # if ($scheme = http) {
+    #     return 301 https://nodes.okcash.org$request_uri;
+    # }
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:/oknodes/oknodes.sock;
+    }
+}

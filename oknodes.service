@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve oknodes
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/oknodes
+Environment=FLASK_ENV=test
+ExecStart=/usr/local/bin/uwsgi --ini /oknodes/flask.ini
+
+[Install]
+WantedBy=multi-user.target

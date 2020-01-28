@@ -30,7 +30,7 @@ import binascii
 from ipaddress import ip_network
 
 class DefaultFlaskConfig(object):
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///nodes.sqlite'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///oknodes.sqlite'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     TEMPLATES_AUTO_RELOAD = True
 
@@ -65,7 +65,7 @@ def get_ipv4_bogons():
 
 def load_config():
     with open("crawler_config.yml", "r") as f:
-        conf = yaml.load(f)
+        conf = yaml.safe_load(f)
 
     if 'networks' in conf:
         for network in conf['networks']:

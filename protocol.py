@@ -25,7 +25,6 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 """
 Bitcoin protocol access for Bitnodes.
 Reference: https://en.bitcoin.it/wiki/Protocol_specification
@@ -35,10 +34,10 @@ Reference: https://en.bitcoin.it/wiki/Protocol_specification
                            protocol version >= 70002
 -------------------------------------------------------------------------------
 [---MESSAGE---]
-[ 4] MAGIC_NUMBER               (\xF9\xBE\xB4\xD4)                  uint32_t
+[ 4] MAGIC_NUMBER               (\x69\xf0\x0f\x69)                  uint32_t
 [12] COMMAND                                                        char[12]
 [ 4] LENGTH                     <I (len(payload))                   uint32_t
-[ 4] CHECKSUM                   groestl(groestl(payload)[:4])       uint32_t
+[ 4] CHECKSUM                   okcash(okcash(payload)[:4])       uint32_t
 [..] PAYLOAD                    see below
 
     [---VERSION_PAYLOAD---]
@@ -149,7 +148,6 @@ from binascii import hexlify, unhexlify
 from collections import deque
 from io import SEEK_CUR, BytesIO
 from operator import itemgetter
-from groestlcoin_hash import getHash
 
 # MAGIC_NUMBER = "\xF9\xBE\xB4\xD9"
 # PORT = 8333
@@ -209,8 +207,8 @@ class RemoteHostClosedConnection(ConnectionError):
     pass
 
 
-def groestlhash(data):
-    return getHash(data, len(data))
+def sha256(data):
+    return hashlib.sha256(data).digest()
 
 
 def unpack(fmt, string):
@@ -289,7 +287,7 @@ class Serializer(object):
 
         msg.extend([
             struct.pack("<I", len(payload)),
-            groestlhash(payload)[:4],
+            sha256(sha256(payload))[:4],
             payload,
         ])
         return b''.join(msg)
@@ -312,7 +310,7 @@ class Serializer(object):
                 data_len, HEADER_LEN + msg['length']))
 
         payload = data.read(msg['length'])
-        computed_checksum = groestlhash(payload)[:4]
+        computed_checksum = sha256(sha256(payload))[:4]
         if computed_checksum != msg['checksum']:
             raise InvalidPayloadChecksum("{} != {}".format(
                 hexlify(computed_checksum), hexlify(msg['checksum'])))
@@ -500,7 +498,7 @@ class Serializer(object):
 
         # Calculate hash from the entire payload
         payload = self.serialize_tx_payload(msg)
-        msg['tx_hash'] = hexlify(groestlhash(payload))[::-1]
+        msg['tx_hash'] = hexlify(sha256(sha256(payload))[::-1])
 
         return msg
 
@@ -510,7 +508,7 @@ class Serializer(object):
         # Calculate hash from: version (4 bytes) + prev_block_hash (32 bytes) +
         # merkle_root (32 bytes) + timestamp (4 bytes) + bits (4 bytes) +
         # nonce (4 bytes) = 80 bytes
-        msg['block_hash'] = hexlify(groestlhash(data[:80]))[::-1]
+        msg['block_hash'] = hexlify(sha256(sha256(data[:80]))[::-1]
 
         data = BytesIO(data)
 
@@ -696,7 +694,7 @@ class Serializer(object):
 
     def deserialize_block_header(self, data):
         header = data.read(80)
-        block_hash = groestlhash(header)[::-1]  # BE -> LE
+        block_hash = sha256(sha256(header))[::-1]  # BE -> LE
         header = BytesIO(header)
         version = struct.unpack("<i", header.read(4))[0]
         prev_block_hash = header.read(32)[::-1]  # BE -> LE
