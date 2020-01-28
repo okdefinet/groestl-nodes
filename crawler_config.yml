@@ -17,7 +17,7 @@ getaddr_prop: 0.2
 # How much the block height has to differ from the median to be marked inactive
 inactive_threshold:
   default: 48
-  testnet: 48
+  oktestnet: 48
 
 # Attempt to establish connection with IPv6 nodes
 ipv6: True
@@ -26,11 +26,11 @@ ipv6: True
 onion: False
 
 # Tor proxy is required to connect to .onion address
-tor_proxy: 127.0.0.1:9050
+#tor_proxy: 127.0.0.1:9050
 
 # order with which to process the networks
 crawl_order:
-  - testnet
+  - oktestnet
   - okcash
 
 # Locks database table and updates Last_Checked BEFORE crawling nodes
@@ -65,7 +65,7 @@ export_inactive_nodes: False
 
 # Excluded user agents - regex (see https://docs.python.org/3/library/re.html)
 excluded_user_agents:
-  - /desire*
+    - /desire*
 
 # historical data reporting interval (hours)
 historic_interval: 4
@@ -76,27 +76,30 @@ networks:
     services: 0
     magic_number: 69f00f69
     port: 6970
-    protocol_version: 60022
+    protocol_version: 60021
     min_protocol_version: 60021
     dns_seeds:
       - seed1.okcash.co
       - seed2.okcash.co
       - seed3.okcash.co
       - seed4.okcash.co
+      - seed5.okcash.co
+      - seed6.okcash.co
+      - seed7.okcash.co
     address_seeds:
+      - 0.0.0.0
       - 38.240.3.130
 
-  testnet:
+  oktestnet:
     services: 0
     magic_number: 00097a0f
     port: 7980
-    protocol_version: 60022
+    protocol_version: 60021
     min_protocol_version: 60021
     dns_seeds:
-    - test-seed1.okcash.co
-    - test-seed2.okcash.co
+       - testseed1.okcash.co
     address_seeds:
-    - aocojvqcybdoxekv.onion
+       - 45.12.110.5
 
 exclude_ipv4_networks:
   - 0.0.0.0/8
@@ -136,3 +139,5 @@ exclude_ipv4_bogons: True
 
 # Use median percentile +/- N interquartile ranges in place of block height to determine activity
 inactive_use_iqr: False
+
+
