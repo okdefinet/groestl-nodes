@@ -645,8 +645,7 @@ def dump(session):
 def generate_historic_data(session):
     networks = [x[0] for x in session.query(Node.network).distinct()]
     sd = session.query(func.min(Node.first_seen)).one()[0]
-    start_date = datetime.datetime(sd.year, sd.month, sd.day,
-                                   sd.hour // CONF['historic_interval'] * CONF['historic_interval'], 0, 0)
+    start_date = datetime.datetime( sd.year, sd.month, sd.day, sd.hour // CONF['historic_interval'] * CONF['historic_interval'], 0, 0)
     end_date = session.query(func.max(Node.last_seen)).one()[0]
 
     historic_interval = datetime.timedelta(hours=CONF['historic_interval'])
