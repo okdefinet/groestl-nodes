@@ -17,7 +17,7 @@ getaddr_prop: 0.2
 # How much the block height has to differ from the median to be marked inactive
 inactive_threshold:
   default: 48
-  oktestnet: 48
+  testnet: 48
 
 # Attempt to establish connection with IPv6 nodes
 ipv6: True
@@ -30,7 +30,7 @@ onion: False
 
 # order with which to process the networks
 crawl_order:
-  - oktestnet
+  - testnet
   - okcash
 
 # Locks database table and updates Last_Checked BEFORE crawling nodes
@@ -90,7 +90,7 @@ networks:
       - 0.0.0.0
       - 38.240.3.130
 
-  oktestnet:
+  testnet:
     services: 0
     magic_number: 00097a0f
     port: 7980
